@@ -1,0 +1,47 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset with the correct path
+file_path = "/content/listings_detailed.csv"
+df = pd.read_csv(file_path)
+
+# Display basic info and first few rows
+print("Dataset Overview:")
+print(df.info())
+print(df.head())
+
+# Identify the relevant column (check for neighborhood-related column names)
+neighborhood_col = [col for col in df.columns if 'neigh' in col.lower()]
+if neighborhood_col:
+    neighborhood_col = neighborhood_col[0]  # Take the first match
+    print(f"Using column: {neighborhood_col} for analysis.")
+else:
+    raise ValueError("No column related to neighborhood found in dataset.")
+
+# Count listings per neighborhood
+neighborhood_counts = df[neighborhood_col].value_counts()
+
+# Display top 10 and bottom 10 neighborhoods
+print("\nTop 10 neighborhoods with most listings:")
+print(neighborhood_counts.head(10))
+
+print("\nBottom 10 neighborhoods with least listings:")
+print(neighborhood_counts.tail(10))
+
+# Plot the distribution of listings across neighborhoods
+plt.figure(figsize=(15, 6))
+sns.barplot(x=neighborhood_counts.index[:20], y=neighborhood_counts.values[:20], palette="viridis")
+plt.xticks(rotation=90)
+plt.xlabel("Neighborhood")
+plt.ylabel("Number of Listings")
+plt.title("Top 20 Neighborhoods with Most Listings")
+plt.show()
+
+# Check if the distribution is even
+plt.figure(figsize=(12, 6))
+sns.histplot(neighborhood_counts, bins=30, kde=True)
+plt.xlabel("Number of Listings per Neighborhood")
+plt.ylabel("Frequency")
+plt.title("Distribution of Listings Across Neighborhoods")
+plt.show()
